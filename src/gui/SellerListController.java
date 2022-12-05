@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerListController implements Initializable, DataChangeListeners {
@@ -59,13 +60,13 @@ public class SellerListController implements Initializable, DataChangeListeners 
 
 	@FXML
 	public void onBtNewAction() {
-		btNew.setOnAction(
-				event -> createDialogForm(new Seller(), "/gui/SellerForm.fxml", Utils.currentStage(event)));
+		btNew.setOnAction(event -> createDialogForm(new Seller(), "/gui/SellerForm.fxml", Utils.currentStage(event)));
 
 	}
 
 	public void setSellerService(SellerService service) {
 		this.service = service;
+
 	}
 
 	public void updateTableView() {
@@ -87,7 +88,8 @@ public class SellerListController implements Initializable, DataChangeListeners 
 
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
-			controller.setSellerService(new SellerService());
+			controller.setServices(new SellerService(), new DepartmentService());
+			controller.loadAssociatedObjects();
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 
@@ -113,11 +115,10 @@ public class SellerListController implements Initializable, DataChangeListeners 
 
 		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
 		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
-		
+
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewSeller.prefHeightProperty().bind(stage.heightProperty());
-		
-		
+
 	}
 
 	@Override
@@ -144,8 +145,7 @@ public class SellerListController implements Initializable, DataChangeListeners 
 					return;
 				}
 				setGraphic(button);
-				button.setOnAction(
-						event -> createDialogForm(obj, "/gui/SellerForm.fxml", Utils.currentStage(event)));
+				button.setOnAction(event -> createDialogForm(obj, "/gui/SellerForm.fxml", Utils.currentStage(event)));
 			}
 		});
 	}
